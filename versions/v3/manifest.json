@@ -1,0 +1,13 @@
+{
+  "name": "LinkSentinel",
+  "description": "LinkSentinel monitors URLs to detect fraudulent sites, helping you navigate the internet safely.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs", "storage"]
+}

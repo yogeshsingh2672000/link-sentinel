@@ -1,0 +1,19 @@
+body {
+  width: 300px;
+  height: 400px;
+  padding: 0.5rem;
+}
+
+#activityList {
+  max-height: 400px;
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.heading {
+  font-size: 2em;
+  color: #333;
+  font-weight: bold;
+  line-height: 1.5;
+}

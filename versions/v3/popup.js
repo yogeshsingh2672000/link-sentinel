@@ -7,42 +7,24 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         const history = result.history || [];
 
-        const activityList = document.getElementById("activityList");
-
-        // Clear the current list before updating
-        activityList.innerHTML = "";
-
         if (history.length === 0) {
-          activityList.innerHTML = "<p>No history available.</p>";
+          document.getElementById("activityList").innerHTML =
+            "<p>No history available.</p>";
         } else {
-          // Reverse the history array to show the latest log at the top
-          history.reverse().forEach((log) => {
-            const logDiv = document.createElement("div");
-
-            const url = document.createElement("p");
-            url.innerHTML = `<strong>URL:</strong> ${log.url}`;
-
-            const isValid = document.createElement("p");
-            isValid.innerHTML = `<strong>Is Valid:</strong> ${
-              log.isValid ? "Yes" : "No"
-            }`;
-
-            const timestamp = document.createElement("p");
-            timestamp.innerHTML = `<strong>Timestamp:</strong> ${new Date(
-              log.timestamp
-            ).toLocaleString()}`;
-
-            const hr = document.createElement("hr");
-
-            // Append all elements to the logDiv
-            logDiv.appendChild(url);
-            logDiv.appendChild(isValid);
-            logDiv.appendChild(timestamp);
-            logDiv.appendChild(hr);
-
-            // Append the logDiv to the activity list (latest at top)
-            activityList.appendChild(logDiv);
+          let message = "";
+          // Loop through history and create a message for each log (new logs at the top)
+          history.forEach((log) => {
+            message = `
+                <div>
+                  <p><strong>URL:</strong> ${log.url}</p>
+                  <p><strong>Is Valid:</strong> ${
+                    log.isValid ? "Yes" : "No"
+                  }</p>
+                  <hr />
+                  ${message}
+                </div>`;
           });
+          document.getElementById("activityList").innerHTML = message;
         }
       }
     });
@@ -79,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Add event listener for any new URL data from background.js
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type === "newValidation") {
-      saveHistory(message.log); // Now message.log is correctly handled
+      saveHistory(message.log);
     }
   });
 });

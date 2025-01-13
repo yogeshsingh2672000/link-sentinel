@@ -1,30 +1,32 @@
-function extractDomain(url) {
-  const pattern = /^(?:https?:\/\/)?(www\.[a-zA-Z0-9.-]+)\/?$/;
-  const match = url.match(pattern);
-  if (match) {
-    return match[1];
-  } else {
-    return null; // Returns null if the URL doesn't match the expected pattern
+// Function to validate the URL based on custom criteria
+function getDomain(url, subdomain = false) {
+  subdomain = subdomain || false;
+
+  url = url.replace(/(https?:\/\/)?(www.)?/i, "");
+
+  if (!subdomain) {
+    url = url.split(".");
+
+    url = url.slice(url.length - 2).join(".");
   }
+
+  if (url.indexOf("/") !== -1) {
+    return url.split("/")[0];
+  }
+
+  console.log(url);
+  return url;
 }
 
-// Function to validate the URL based on custom criteria
 function isValidAlphabetString(url) {
-  const str = extractDomain(url);
+  const str = getDomain(url);
   if (!str || typeof str !== "string") {
     return false;
   }
 
   return str.split("").every((char) => {
     const ascii = char.charCodeAt(0);
-    return (
-      (ascii >= 65 && ascii <= 90) || // A-Z
-      (ascii >= 97 && ascii <= 122) || // a-z
-      (ascii >= 48 && ascii <= 57) || // 0-9
-      char === "." ||
-      char === "-" ||
-      char === "_"
-    );
+    return (ascii >= 65 && ascii <= 90) || (ascii >= 97 && ascii <= 122);
   });
 }
 
@@ -45,19 +47,18 @@ function handleTabUrlChange(tabId) {
     const log = {
       url: currentTabUrl,
       isValid,
-      timestamp: new Date().toISOString(), // Add timestamp to log
     };
 
-    // Send log data to popup.js (or other listeners)
+    // Send log data to popup.js
     chrome.runtime.sendMessage({
       type: "newValidation",
-      log, // Send log directly here
+      log,
     });
 
     // Optionally save data to local storage (for persistence across browser sessions)
     chrome.storage.local.get("history", (result) => {
       const history = result.history || [];
-      history.push(log);
+      history.unshift(log); // Add new log at the top (unshift)
 
       // Limit history length to 10 entries (you can adjust this number)
       if (history.length > 10) {
